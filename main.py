@@ -9,7 +9,7 @@ import math
 import sys
 import matplotlib.pyplot as plt
 import collections
-
+import glob
 points=[]
 
 def MS(src,req):
@@ -84,8 +84,9 @@ def mouseCallback(event,x,y,flags,param):
         Selected=False
 
 #init
-img=cv2.imread("data/00000000.jpg",0)
-colored=cv2.imread("data/00000000.jpg",1)
+datas=glob.glob("data/*.jpg")
+img=cv2.imread(datas[0],0)
+colored=cv2.imread(datas[0],1)
 dim=(80,60)
 cv2.namedWindow('image')
 cv2.setMouseCallback('image',mouseCallback)
@@ -156,25 +157,16 @@ image=0
 images=[]
 colored=[]
 print("Loading images...")
-while image< 602:
-    if image < 10:
-        string="data/0000000"
-    elif image >=10 and image <100:
-        string="data/000000"
-    elif image >99:
-        string="data/00000"
-
- 
-
-    images.append(cv2.imread(string+str(image)+".jpg",0))
-    images[len(images)-1]=cv2.GaussianBlur( images[len(images)-1],(3,3),0)
-    images[len(images)-1]=cv2.resize( images[len(images)-1], dim, interpolation = cv2.INTER_AREA)
-    colored.append(cv2.imread(string+str(image)+".jpg"))
+for path in datas:
+    images.append(cv2.imread(path,0))
+    images[-1]=cv2.GaussianBlur( images[-1],(3,3),0)
+    images[-1]=cv2.resize( images[-1], dim, interpolation = cv2.INTER_AREA)
+    colored.append(cv2.imread(path))
 
     image+=1
 image=0
 prevposx=prevposy=0
-while(image<500):
+while(image<len(datas)):
     prevh=h1
     prevw=w1
     i=0
@@ -190,8 +182,6 @@ while(image<500):
 
    
     if(not img.any()):
-        print(string+str(image)+".jpg")
-        break
         print("error loading")
         continue
     I=np.array(img)
